@@ -29,7 +29,7 @@ describe("vyper-calculator", () => {
 
     // account fetch
     const stateAccountInfo = await program.account.state.fetch(statePubkey);
-    expect(stateAccountInfo.value.toNumber()).to.eq(inputA + inputB);
+    expect(stateAccountInfo.value).to.eq(inputA + inputB);
   });
 
   // * * * * * * * * * * * * * *
@@ -39,8 +39,8 @@ describe("vyper-calculator", () => {
     const statePubkey = await initializeState(program);
 
     // op
-    const inputA = 30;
-    const inputB = 10;
+    const inputA = 10;
+    const inputB = 30;
     await program.methods
       .sub(bn(inputA), bn(inputB))
       .accounts({
@@ -50,7 +50,7 @@ describe("vyper-calculator", () => {
 
     // account fetch
     const stateAccountInfo = await program.account.state.fetch(statePubkey);
-    expect(stateAccountInfo.value.toNumber()).to.eq(inputA - inputB);
+    expect(stateAccountInfo.value).to.eq(inputA - inputB);
   });
 
   // * * * * * * * * * * * * * *
@@ -71,7 +71,7 @@ describe("vyper-calculator", () => {
 
     // account fetch
     const stateAccountInfo = await program.account.state.fetch(statePubkey);
-    expect(stateAccountInfo.value.toNumber()).to.eq(inputA * inputB);
+    expect(stateAccountInfo.value).to.eq(inputA * inputB);
   });
 
   // * * * * * * * * * * * * * *
@@ -81,8 +81,8 @@ describe("vyper-calculator", () => {
     const statePubkey = await initializeState(program);
 
     // op
-    const inputA = 30;
-    const inputB = 10;
+    const inputA = 10;
+    const inputB = 30;
     await program.methods
       .div(bn(inputA), bn(inputB))
       .accounts({
@@ -92,7 +92,7 @@ describe("vyper-calculator", () => {
 
     // account fetch
     const stateAccountInfo = await program.account.state.fetch(statePubkey);
-    expect(stateAccountInfo.value.toNumber()).to.eq(inputA / inputB);
+    expect(stateAccountInfo.value).to.be.closeTo(inputA / inputB, 0.000000000000001);
   });
 });
 
