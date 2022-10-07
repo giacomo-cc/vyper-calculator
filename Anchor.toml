@@ -1,0 +1,14 @@
+[features]
+seeds = false
+[programs.localnet]
+vyper_calculator = "H13Jr5DwmYdSBS5XSFCFFPGbagFRNxN3EvgTg1W1uJ3E"
+
+[registry]
+url = "https://anchor.projectserum.com"
+
+[provider]
+cluster = "localnet"
+wallet = "/Users/giacomocavicchioli/.config/solana/id.json"
+
+[scripts]
+test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
