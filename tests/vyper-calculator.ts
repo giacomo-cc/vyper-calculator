@@ -3,6 +3,7 @@ import * as anchor from "@project-serum/anchor";
 import { Program } from "@project-serum/anchor";
 import { VyperCalculator } from "../target/types/vyper_calculator";
 import { assert, expect } from "chai";
+import { RustDecimalWrapper } from "@vyper-protocol/rust-decimal-wrapper";
 
 describe("vyper-calculator", () => {
   const provider = anchor.AnchorProvider.env();
@@ -29,7 +30,7 @@ describe("vyper-calculator", () => {
 
     // account fetch
     const stateAccountInfo = await program.account.state.fetch(statePubkey);
-    expect(stateAccountInfo.value).to.eq(inputA + inputB);
+    expect(new RustDecimalWrapper(new Uint8Array(stateAccountInfo.value)).toNumber()).to.eq(inputA + inputB);
   });
 
   // * * * * * * * * * * * * * *
@@ -39,8 +40,8 @@ describe("vyper-calculator", () => {
     const statePubkey = await initializeState(program);
 
     // op
-    const inputA = 10;
-    const inputB = 30;
+    const inputA = 30;
+    const inputB = 10;
     await program.methods
       .sub(bn(inputA), bn(inputB))
       .accounts({
@@ -50,7 +51,7 @@ describe("vyper-calculator", () => {
 
     // account fetch
     const stateAccountInfo = await program.account.state.fetch(statePubkey);
-    expect(stateAccountInfo.value).to.eq(inputA - inputB);
+    expect(new RustDecimalWrapper(new Uint8Array(stateAccountInfo.value)).toNumber()).to.eq(inputA - inputB);
   });
 
   // * * * * * * * * * * * * * *
@@ -71,7 +72,7 @@ describe("vyper-calculator", () => {
 
     // account fetch
     const stateAccountInfo = await program.account.state.fetch(statePubkey);
-    expect(stateAccountInfo.value).to.eq(inputA * inputB);
+    expect(new RustDecimalWrapper(new Uint8Array(stateAccountInfo.value)).toNumber()).to.eq(inputA * inputB);
   });
 
   // * * * * * * * * * * * * * *
@@ -92,7 +93,8 @@ describe("vyper-calculator", () => {
 
     // account fetch
     const stateAccountInfo = await program.account.state.fetch(statePubkey);
-    expect(stateAccountInfo.value).to.be.closeTo(inputA / inputB, 0.000000000000001);
+    const resValue = new RustDecimalWrapper(new Uint8Array(stateAccountInfo.value)).toNumber();
+    expect(resValue).to.be.closeTo(inputA / inputB, 0.000000000000001);
   });
 });
 

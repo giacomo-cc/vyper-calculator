@@ -1,34 +1,49 @@
 use anchor_lang::prelude::*;
+use rust_decimal::Decimal;
 
 declare_id!("H13Jr5DwmYdSBS5XSFCFFPGbagFRNxN3EvgTg1W1uJ3E");
 
 #[program]
 pub mod vyper_calculator {
+    use rust_decimal_macros::dec;
+
     use super::*;
 
     pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
         ctx.accounts.state.authority = ctx.accounts.authority.key();
-        ctx.accounts.state.value = 0f64;
+        ctx.accounts.state.value = dec!(0).serialize();
         Ok(())
     }
 
     pub fn sum(ctx: Context<OpContext>, a: u64, b: u64) -> Result<()> {
-        ctx.accounts.state.value = (a as f64) + (b as f64);
+        let a_dec = Decimal::from(a);
+        let b_dec = Decimal::from(b);
+        let res = a_dec + b_dec;
+        ctx.accounts.state.value = res.serialize();
         Ok(())
     }
 
     pub fn sub(ctx: Context<OpContext>, a: u64, b: u64) -> Result<()> {
-        ctx.accounts.state.value = (a as f64) - (b as f64);
+        let a_dec = Decimal::from(a);
+        let b_dec = Decimal::from(b);
+        let res = a_dec - b_dec;
+        ctx.accounts.state.value = res.serialize();
         Ok(())
     }
 
     pub fn mul(ctx: Context<OpContext>, a: u64, b: u64) -> Result<()> {
-        ctx.accounts.state.value =(a as f64) * (b as f64);
+        let a_dec = Decimal::from(a);
+        let b_dec = Decimal::from(b);
+        let res = a_dec * b_dec;
+        ctx.accounts.state.value = res.serialize();
         Ok(())
     }
 
     pub fn div(ctx: Context<OpContext>, a: u64, b: u64) -> Result<()> {
-        ctx.accounts.state.value = (a as f64) / (b as f64);
+        let a_dec = Decimal::from(a);
+        let b_dec = Decimal::from(b);
+        let res = a_dec / b_dec;
+        ctx.accounts.state.value = res.serialize();
         Ok(()) 
     }
 
@@ -37,13 +52,13 @@ pub mod vyper_calculator {
 #[account]
 pub struct State {
     pub authority: Pubkey,
-    pub value: f64
+    pub value: [u8; 16]
 }
 
 impl State {
     pub const LEN: usize = 8 + // discriminator
     32 + // pub authority: Pubkey,
-    8;  // pub value: f64
+    16;  // pub value: [u8; 16]
 }
 
 #[derive(Accounts)]
